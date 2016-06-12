@@ -19,6 +19,11 @@ public class PlayerController : MonoBehaviour
     float currentRotation = 0.0f;
     float currentSpeed = 0.0f;
 
+    public GameObject shot;
+    public Transform shotSpawn;
+    public float fireRate;
+    private float nextFire;
+
     //Rotate player if horizontal buttons are pressed
     private void rotate()
     {
@@ -93,10 +98,26 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //Shoot if Fire button is pressed
+    private void fire()
+    {
+        if (Input.GetButton("Fire1") && Time.time > nextFire)
+        {
+            nextFire = Time.time + fireRate;
+            Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
+        }
+    }
+
     void FixedUpdate()
     {
         rotate();
         move();
         handleBoundaries();
     }
+
+    void Update()
+    {
+        fire();
+    }
+
 }
