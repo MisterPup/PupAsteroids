@@ -74,25 +74,33 @@ public class PlayerController : MonoBehaviour
         else //not bounded, teletransport player to the other side of the world if boundaries are overpassed
         {
             float xPosition = GetComponent<Rigidbody>().position.x;
+            float yPosition = GetComponent<Rigidbody>().position.y;
             float zPosition = GetComponent<Rigidbody>().position.z;
 
             float worldXLength = Mathf.Abs(boundary.xMax) + Mathf.Abs(boundary.xMin);
             float worldZLength = Mathf.Abs(boundary.zMax) + Mathf.Abs(boundary.zMin);
 
             if (xPosition >= boundary.xMax)
+            {
                 xPosition -= worldXLength;
+            }                
             else if (xPosition <= boundary.xMin)
+            {
                 xPosition += worldXLength;
-
+            }
             if (zPosition >= boundary.zMax)
+            {
                 zPosition -= worldZLength;
+            }                
             else if (zPosition <= boundary.zMin)
+            {
                 zPosition += worldZLength;
+            }                
 
             GetComponent<Rigidbody>().position = new Vector3
             (
                 xPosition,
-                0.0f,
+                yPosition,
                 zPosition
             );
         }
