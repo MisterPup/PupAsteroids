@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BoltMover : MonoBehaviour
+public class BoltController : MonoBehaviour
 {
     public float speed;
 
