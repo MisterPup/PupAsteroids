@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//every asteroid instance has this script attached
 public class AsteroidController : MonoBehaviour
 {
-
     public float tumble;
-    public GameObject[] destroyableObjects;
     public int numberOfFragments;
+    public GameObject[] destroyableObjects;
 
+	public int maxDivision;
+	private int numDivision = 0;
+	    
     void Start()
     {
         GetComponent<Rigidbody>().angularVelocity = Random.insideUnitSphere * tumble; //random 3d rotation
@@ -22,11 +25,14 @@ public class AsteroidController : MonoBehaviour
                 createMiniAsteroids();
                 destroyObjects(other);
 
-
                 break;
             }
         }
     }
+
+	private void setNumDivision(int numDivision) {
+		this.numDivision = numDivision;
+	}
 
     private void destroyObjects(Collider other)
     {
@@ -34,37 +40,44 @@ public class AsteroidController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    //When the asteroid in destroyed, create "numberOfFragments" mini asteroids, half the size of its parent
-    private void createMiniAsteroids()
-    {
-        for (int i = 0; i < 4; i++)
-        {
+	private int getRandomValueForComponent() 
+	{
+		int[] possibileValues = new int[2] {-1 , 1};
 
-        }
+		int randomNumber = Random.Range (0, 2); //gives in outputs 0 or 1
+		return possibileValues[randomNumber];
+	}
 
-        GameObject newAsteroid1 = cloneAsteroid();
-        Rigidbody newAsteroid1Rb = newAsteroid1.GetComponent<Rigidbody>();
-        newAsteroid1Rb.velocity = new Vector3(1.0f, 0.0f, 1.0f);
-
-        GameObject newAsteroid2 = cloneAsteroid();
-        Rigidbody newAsteroid2Rb = newAsteroid2.GetComponent<Rigidbody>();
-        newAsteroid2Rb.velocity = new Vector3(-1.0f, 0.0f, 1.0f);
-
-        GameObject newAsteroid3 = cloneAsteroid();
-        Rigidbody newAsteroid3Rb = newAsteroid3.GetComponent<Rigidbody>();
-        newAsteroid3Rb.velocity = new Vector3(-1.0f, 0.0f, -1.0f);
-
-        GameObject newAsteroid4 = cloneAsteroid();
-        Rigidbody newAsteroid4Rb = newAsteroid4.GetComponent<Rigidbody>();
-        newAsteroid4Rb.velocity = new Vector3(1.0f, 0.0f, -1.0f);
+    private Vector3 getRandomVelocity() {
+		return new Vector3(getRandomValueForComponent(), 0, getRandomValueForComponent());
     }
 
-    private GameObject cloneAsteroid()
+    private void generateNewAsteroid()
     {
+		if (numDivision == maxDivision) //we can divide an asteroids a limited number of times
+		{
+			return;
+		}
+
         GameObject newAsteroid = (GameObject)Instantiate(gameObject, transform.position, transform.rotation);
+
+		//setting scale and velocity
         Rigidbody newAsteroidRb = newAsteroid.GetComponent<Rigidbody>();
         Vector3 newAsteroidsScale = newAsteroidRb.transform.localScale;
         newAsteroidRb.transform.localScale = newAsteroidsScale * 0.5f; //halve the size
-        return newAsteroid;
+        newAsteroidRb.velocity = getRandomVelocity();
+
+		//changing numDivision property to limit generation of new asteroids
+		AsteroidController newAsteroidControllerScript = (AsteroidController)newAsteroid.GetComponent(typeof(AsteroidController));
+		newAsteroidControllerScript.setNumDivision(numDivision + 1);
+    }
+
+    //When the asteroid is destroyed, create "numberOfFragments" mini asteroids, each of them half the size of its parent
+    private void createMiniAsteroids()
+    {
+        for (int i = 0; i < numberOfFragments; i++)
+        {
+            generateNewAsteroid();
+        }
     }
 }
