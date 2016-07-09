@@ -1,12 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-[System.Serializable]
-public class Boundary
-{
-    public float xMin, xMax, zMin, zMax;
-}
-
 public class PlayerController : MonoBehaviour
 {
     public float speed;
@@ -14,7 +8,6 @@ public class PlayerController : MonoBehaviour
     public float rotationSpeed;
     public float speedDecrement;
     public bool isBounded;
-    public Boundary boundary;
 
     float currentRotation = 0.0f;
     float currentSpeed = 0.0f;
@@ -59,53 +52,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //Handle behavior when the player reaches world boundaries
-    private void handleBoundaries()
-    {
-        if (isBounded) //are we bounded by the world limits?
-        {
-            GetComponent<Rigidbody>().position = new Vector3
-            (
-                Mathf.Clamp(GetComponent<Rigidbody>().position.x, boundary.xMin, boundary.xMax),
-                0.0f,
-                Mathf.Clamp(GetComponent<Rigidbody>().position.z, boundary.zMin, boundary.zMax)
-            );
-        }
-        else //not bounded, teletransport player to the other side of the world if boundaries are overpassed
-        {
-            float xPosition = GetComponent<Rigidbody>().position.x;
-            float yPosition = GetComponent<Rigidbody>().position.y;
-            float zPosition = GetComponent<Rigidbody>().position.z;
-
-            float worldXLength = Mathf.Abs(boundary.xMax) + Mathf.Abs(boundary.xMin);
-            float worldZLength = Mathf.Abs(boundary.zMax) + Mathf.Abs(boundary.zMin);
-
-            if (xPosition >= boundary.xMax)
-            {
-                xPosition -= worldXLength;
-            }                
-            else if (xPosition <= boundary.xMin)
-            {
-                xPosition += worldXLength;
-            }
-            if (zPosition >= boundary.zMax)
-            {
-                zPosition -= worldZLength;
-            }                
-            else if (zPosition <= boundary.zMin)
-            {
-                zPosition += worldZLength;
-            }                
-
-            GetComponent<Rigidbody>().position = new Vector3
-            (
-                xPosition,
-                yPosition,
-                zPosition
-            );
-        }
-    }
-
     //Shoot if Fire button is pressed
     private void fire()
     {
@@ -120,7 +66,6 @@ public class PlayerController : MonoBehaviour
     {
         rotate();
         move();
-        handleBoundaries();
     }
 
     void Update()

@@ -52,7 +52,7 @@ public class AsteroidController : MonoBehaviour
 		return new Vector3(getRandomValueForComponent(), 0, getRandomValueForComponent());
     }
 
-    private void generateNewAsteroid()
+    private void createMiniAsteroid()
     {
 		if (numDivision == maxDivision) //we can divide an asteroids a limited number of times
 		{
@@ -67,7 +67,7 @@ public class AsteroidController : MonoBehaviour
         newAsteroidRb.transform.localScale = newAsteroidsScale * 0.5f; //halve the size
         newAsteroidRb.velocity = getRandomVelocity();
 
-		//changing numDivision property to limit generation of new asteroids
+		//changing numDivision property of created asteroid to limit generation of new ones
 		AsteroidController newAsteroidControllerScript = (AsteroidController)newAsteroid.GetComponent(typeof(AsteroidController));
 		newAsteroidControllerScript.setNumDivision(numDivision + 1);
     }
@@ -77,7 +77,7 @@ public class AsteroidController : MonoBehaviour
     {
         for (int i = 0; i < numberOfFragments; i++)
         {
-            generateNewAsteroid();
+            createMiniAsteroid();
         }
     }
 }
