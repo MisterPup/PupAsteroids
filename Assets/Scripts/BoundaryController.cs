@@ -3,14 +3,14 @@ using System.Collections;
 
 public class BoundaryController : MonoBehaviour
 {
-//    public GameObject[] destroyableObjects;
+	//    public GameObject[] destroyableObjects;
 
-	float worldXSize;
-	float worldZSize;
+	private float worldXSize;
+	private float worldZSize;
 
 	private Boundary boundary;
 
-	void Start() 
+	void Start ()
 	{
 		worldXSize = gameObject.transform.localScale.x;
 		worldZSize = gameObject.transform.localScale.z;
@@ -24,9 +24,9 @@ public class BoundaryController : MonoBehaviour
 		boundary = new Boundary (boundaryXMin, boundaryXMax, boundaryZMin, boundaryZMax);
 	}
 
-    // Delete destroyable object when they leave the boundaries
-    void OnTriggerExit(Collider other)
-    {
+	// Delete destroyable object when they leave the boundaries
+	void OnTriggerExit (Collider other)
+	{
 		Debug.Log (other);
 
 		Vector3 otherPosition = other.transform.position; 
@@ -34,29 +34,22 @@ public class BoundaryController : MonoBehaviour
 		float otherYPosition = otherPosition.y; //we do not modify it
 		float otherZPosition = otherPosition.z;
 
-		if (otherXPosition >= boundary.xMax)
-		{
+		if (otherXPosition >= boundary.xMax) {
 			otherXPosition -= worldXSize;
-		}                
-		else if (otherXPosition <= boundary.xMin)
-		{
+		} else if (otherXPosition <= boundary.xMin) {
 			otherXPosition += worldXSize;
 		}
-		if (otherZPosition >= boundary.zMax)
-		{
+		if (otherZPosition >= boundary.zMax) {
 			otherZPosition -= worldZSize;
-		}                
-		else if (otherZPosition <= boundary.zMin)
-		{
+		} else if (otherZPosition <= boundary.zMin) {
 			otherZPosition += worldZSize;
 		}                
 
-		other.transform.position = new Vector3
-			(
-				otherXPosition,
-				otherYPosition,
-				otherZPosition
-			);
+		other.transform.position = new Vector3 (
+			otherXPosition,
+			otherYPosition,
+			otherZPosition
+		);
 
 //        foreach (GameObject destroyableObj in destroyableObjects)
 //        {
@@ -66,7 +59,20 @@ public class BoundaryController : MonoBehaviour
 //                break;
 //            }
 //        }
-    }
+	}
+
+	public float WorldXSize {
+		get {
+			return this.worldXSize;
+		}
+	}
+
+	public float WorldZSize {
+		get {
+			return this.worldZSize;
+		}
+	}
+
 }
 
 
@@ -74,7 +80,7 @@ public class Boundary
 {
 	public float xMin, xMax, zMin, zMax;
 
-	public Boundary(float xMin, float xMax, float zMin, float zMax) 
+	public Boundary (float xMin, float xMax, float zMin, float zMax)
 	{
 		this.xMin = xMin;
 		this.xMax = xMax;
