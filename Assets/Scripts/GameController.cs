@@ -4,11 +4,11 @@ using System.Collections;
 public class GameController : MonoBehaviour
 {
 	public GameObject asteroidPrefab;
-	private string asteroidTag; //search asteroids in the world
-
+	public GameObject world;
 	public GameObject player;
+	public float minPlayerNewAsteroidDistance;
 
-	private GameObject world;
+	private string asteroidTag; //search asteroids in the world
 	private float worldXSize;
 	private float worldZSize;
 	private float minSize; //min between x and z size
@@ -19,7 +19,6 @@ public class GameController : MonoBehaviour
 	{
 		asteroidTag = asteroidPrefab.tag;
 
-		world = GameObject.Find ("World"); //not very maintainable!
 		BoundaryController boundaryController = (BoundaryController)world.GetComponent (typeof(BoundaryController));
 		worldXSize = boundaryController.WorldXSize;
 		worldZSize = boundaryController.WorldZSize;
@@ -35,20 +34,37 @@ public class GameController : MonoBehaviour
 				
 		if (numAsteroids == 0) { //All asteroids destroyed!
 			waveNumber++;
-			startWave ();
+			startNewWave ();
 		}
 	}
 
-	private void startWave ()
+	private Vector3 getPositionForNewAsteroid() {
+		while(true) { //mmm pitfall?
+			Vector3 newAsteroidPosition = Random.insideUnitSphere * minSize / 2; //circle inscribed into world
+			newAsteroidPosition.y = player.transform.position.y; //must be on the same xz plane of the player
+
+			float distancePlayerNewAsteroid = Vector3.Distance(player.transform.position, newAsteroidPosition);
+
+			if (distancePlayerNewAsteroid > minPlayerNewAsteroidDistance) {
+				return newAsteroidPosition;
+			}
+		}
+	}
+
+	private Quaternion getRotationForNewAsteroid() {
+		return Random.rotation;
+	}
+
+	private void startNewWave ()
 	{
 		Debug.Log ("Starting wave: " + waveNumber);
 		for (int i = 0; i < waveNumber; i++) {
-			Vector3 randomPosition = Random.insideUnitSphere * 5; //temporary, because it must be far from the player!
-			randomPosition.y = player.transform.position.y; //must be on the same xz plane of the player
+			Vector3 newAsteroidPosition = getPositionForNewAsteroid ();
+			newAsteroidPosition.y = player.transform.position.y; //must be on the same xz plane of the player
 
-			Quaternion randomRotation = Random.rotation;
+			Quaternion newAsteroidRotation = getRotationForNewAsteroid();
 
-			GameObject newAsteroid = (GameObject)Instantiate (asteroidPrefab, randomPosition, randomRotation);
+			GameObject newAsteroid = (GameObject)Instantiate (asteroidPrefab, newAsteroidPosition, newAsteroidRotation);
 		}
 	}
 }

@@ -9,6 +9,7 @@ public class AsteroidController : MonoBehaviour
 
 	public int numberOfFragments; //fragments generated after destruction
 	public GameObject[] destroyableObjects; //list of object that can be destroyed by an asteroid
+	public GameObject player;
 
 	public int maxDivision; //how many times new asteroids will be generated starting from the first ancestor
 	private int curDivision = 0; //how many times we have generated asteroids starting by the first ancestor
@@ -26,10 +27,14 @@ public class AsteroidController : MonoBehaviour
 	{
 		foreach (GameObject destroyableObj in destroyableObjects) {
 			if (other.gameObject.CompareTag (destroyableObj.tag)) {
-				createMiniAsteroids ();
-				destroyObjects (other);
+				if (!other.gameObject.Equals (player)) {
+					createMiniAsteroids ();
+					destroyObjects (other);
 
-				break;
+					break;
+				}
+			} else if (other.gameObject.CompareTag (player.tag)) { //game over
+				destroyObjects (other);
 			}
 		}
 	}
