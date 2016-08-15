@@ -14,8 +14,8 @@ public class AsteroidController : MonoBehaviour
 	public int maxDivision; //how many times new asteroids will be generated starting from the first ancestor
 	private int curDivision = 0; //how many times we have generated asteroids starting by the first ancestor
 
-	public GameObject asteroidExplosionPrefab;
-	public GameObject playerExplosionPrefab;
+	public GameObject asteroidExplosion;
+	public GameObject playerExplosion;
 
 	public int explosionLifetime;
 
@@ -51,8 +51,8 @@ public class AsteroidController : MonoBehaviour
 
 	private void destroyObjects (Collider other)
 	{
-		GameObject createdAsteroidExplosion = (GameObject)Instantiate(asteroidExplosionPrefab, transform.position, transform.rotation); //create an asteroidExplosion with position and rotation of asteroid
-		GameObject createdPlayerExplosion = (GameObject)Instantiate(playerExplosionPrefab, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
+		GameObject createdAsteroidExplosion = (GameObject)Instantiate(asteroidExplosion, transform.position, transform.rotation); //create an asteroidExplosion with position and rotation of asteroid
+		GameObject createdPlayerExplosion = (GameObject)Instantiate(playerExplosion, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
 
 		Destroy (other.gameObject);
 		Destroy (gameObject);
