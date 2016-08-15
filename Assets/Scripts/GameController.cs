@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
@@ -8,12 +9,15 @@ public class GameController : MonoBehaviour
 	public GameObject player;
 	public float minPlayerNewAsteroidDistance;
 
+	public int waitTimeBeforeNewWave;
+
 	private string asteroidTag; //search asteroids in the world
 	private float worldXSize;
 	private float worldZSize;
 	private float minSize; //min between x and z size
 
-	private int waveNumber = 0;
+	int waveNumber = 0;
+	int numAsteroids = 0;
 
 	void Start ()
 	{
@@ -24,18 +28,13 @@ public class GameController : MonoBehaviour
 		worldZSize = boundaryController.WorldZSize;
 
 		minSize = worldXSize < worldZSize ? worldXSize : worldZSize;
+
+		StartCoroutine (waveManager ());
 	}
 
 	void Update ()
 	{
-		GameObject[] asteroids = GameObject.FindGameObjectsWithTag (asteroidTag); //heavy on performance? We need a better way to manage asteroids!
-		int numAsteroids = asteroids.Length;
-		Debug.Log ("Number of asteroids: " + numAsteroids);
-				
-		if (numAsteroids == 0) { //All asteroids destroyed!
-			waveNumber++;
-			startNewWave ();
-		}
+		
 	}
 
 	private Vector3 getPositionForNewAsteroid() {
@@ -55,16 +54,32 @@ public class GameController : MonoBehaviour
 		return Random.rotation;
 	}
 
-	private void startNewWave ()
-	{
+	IEnumerator waveManager ()
+	{				
+		while (true) {
+			if (isWaveDefeated()) {
+				startNewWave ();
+			}
+			yield return new WaitForSeconds (waitTimeBeforeNewWave); //wait "waitTimeBeforeNewWave" before checking if new wave is needed
+		}
+	}
+
+	void startNewWave() {
+		waveNumber++;
 		Debug.Log ("Starting wave: " + waveNumber);
 		for (int i = 0; i < waveNumber; i++) {
+			numAsteroids++;
 			Vector3 newAsteroidPosition = getPositionForNewAsteroid ();
 			newAsteroidPosition.y = player.transform.position.y; //must be on the same xz plane of the player
-
-			Quaternion newAsteroidRotation = getRotationForNewAsteroid();
-
+			Quaternion newAsteroidRotation = getRotationForNewAsteroid ();
 			GameObject newAsteroid = (GameObject)Instantiate (asteroidPrefab, newAsteroidPosition, newAsteroidRotation);
 		}
+	}
+
+	bool isWaveDefeated() {
+		GameObject[] asteroids = GameObject.FindGameObjectsWithTag (asteroidTag); //heavy on performance? We need a better way to manage asteroids!
+		numAsteroids = asteroids.Length;
+		Debug.Log ("numAsteroids: " + numAsteroids);
+		return numAsteroids == 0;
 	}
 }
