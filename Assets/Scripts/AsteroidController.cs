@@ -14,6 +14,9 @@ public class AsteroidController : MonoBehaviour
 	public int maxDivision; //how many times new asteroids will be generated starting from the first ancestor
 	private int curDivision = 0; //how many times we have generated asteroids starting by the first ancestor
 
+	public GameObject asteroidExplosion;
+	public GameObject playerExplosion;
+
 	void Start ()
 	{
 		GetComponent<Rigidbody> ().angularVelocity = Random.insideUnitSphere * tumble; //random 3d rotation
@@ -46,6 +49,9 @@ public class AsteroidController : MonoBehaviour
 
 	private void destroyObjects (Collider other)
 	{
+		Instantiate(asteroidExplosion, transform.position, transform.rotation); //create an asteroidExplosion with position and rotation of asteroid
+		Instantiate(playerExplosion, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
+
 		Destroy (other.gameObject);
 		Destroy (gameObject);
 	}
