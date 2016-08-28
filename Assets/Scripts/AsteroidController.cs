@@ -18,9 +18,10 @@ public class AsteroidController : MonoBehaviour
 	public GameObject playerExplosion;
 
 	public int explosionLifetime;
+	public int playerScore;
 
-	public GameObject playerScorePrefab; //prefab for retrieving associated tag
-	private GUIText playerScoreGuiText;
+//	public GameObject gamePrefab;
+	private GameController gameController;
 
 	void Start ()
 	{
@@ -30,8 +31,8 @@ public class AsteroidController : MonoBehaviour
 		randomVelocity.y = 0; //must be on the xz plane
 		GetComponent<Rigidbody> ().velocity = randomVelocity;
 
-		GameObject playerScore = GameObject.FindGameObjectWithTag (playerScorePrefab.tag);
-		playerScoreGuiText = playerScore.GetComponent<GUIText> ();
+		GameObject gamePrefab = GameObject.FindGameObjectWithTag("GameController"); //not maintainable :S
+		gameController = (GameController)gamePrefab.GetComponent (typeof(GameController));
 	}
 
 	void OnTriggerEnter (Collider other)
@@ -69,16 +70,14 @@ public class AsteroidController : MonoBehaviour
 		if (isPlayer) {
 			GameObject createdPlayerExplosion = (GameObject)Instantiate (playerExplosion, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
 			Destroy (createdPlayerExplosion, explosionLifetime);
+
+			gameController.gameOver ();
 		}
 	}
 
 	private void updatePlayerScore() 
 	{
-		string playerScoreText = playerScoreGuiText.text;
-		int playerScoreInt = 0;
-		int.TryParse(playerScoreText, out playerScoreInt);
-		playerScoreInt += 1;
-		playerScoreGuiText.text = playerScoreInt.ToString ();
+		gameController.updatePlayersScore (playerScore);
 	}
 
 	private int getRandomValueForComponent ()

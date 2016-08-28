@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
 	public GameObject asteroid;
 	public GameObject world;
 	public GameObject player;
-	public GameObject playerScore;
+
 	public float minPlayerNewAsteroidDistance;
 
 	public int waitTimeBeforeNewWave;
@@ -19,6 +20,17 @@ public class GameController : MonoBehaviour
 
 	int waveNumber = 0;
 	int numAsteroids = 0;
+
+	public GUIText playerScoreTextPrefab;
+	public GUIText gameOverTextPrefab;
+	public GUIText restartTextPrefab;
+
+	private GUIText playerScoreText;
+	private GUIText gameOverText;
+	private GUIText restartText;
+
+	private int playerScore;
+	private bool isGameOver;
 
 	void Start ()
 	{
@@ -32,13 +44,38 @@ public class GameController : MonoBehaviour
 
 		StartCoroutine (waveManager ());
 
-		Instantiate (playerScore, playerScore.transform.position, playerScore.transform.rotation);
-//		Instantiate (playerScore, new Vector3(0.7f, 0.7f, 0.0f), new Quaternion());
+		playerScoreText = (GUIText)Instantiate (playerScoreTextPrefab, playerScoreTextPrefab.transform.position, playerScoreTextPrefab.transform.rotation);
+		gameOverText = (GUIText)Instantiate (gameOverTextPrefab, gameOverTextPrefab.transform.position, gameOverTextPrefab.transform.rotation);
+		restartText = (GUIText)Instantiate (restartTextPrefab, restartTextPrefab.transform.position, restartTextPrefab.transform.rotation);
+
+		playerScoreText.text = "Player score: 0";
+		gameOverText.text = "";
+		restartText.text = "";
+
+		playerScore = 0;
+		isGameOver = false;
+	}
+
+	public void updatePlayersScore(int playerScore)
+	{
+		this.playerScore += playerScore;
+		playerScoreText.text = "Player score: " + this.playerScore;
+	}
+
+	public void gameOver() 
+	{
+		isGameOver = true;
+		gameOverText.text = "Game Over";
 	}
 
 	void Update ()
 	{
-		
+		if (isGameOver) {
+			if (Input.GetKey (KeyCode.R)) {
+				SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+//				Application.LoadLevel (Application.loadedLevel);
+			}
+		}
 	}
 
 	private Vector3 getPositionForNewAsteroid() {
@@ -65,6 +102,11 @@ public class GameController : MonoBehaviour
 				startNewWave ();
 			}
 			yield return new WaitForSeconds (waitTimeBeforeNewWave); //wait "waitTimeBeforeNewWave" before checking if new wave is needed
+
+			if (isGameOver) {
+				restartText.text = "Press 'R' to restart";
+				break;
+			}
 		}
 	}
 
@@ -82,6 +124,12 @@ public class GameController : MonoBehaviour
 
 	bool isWaveDefeated() {
 		GameObject[] asteroids = GameObject.FindGameObjectsWithTag (asteroidTag); //heavy on performance? We need a better way to manage asteroids!
+
+		for (int i = 0; i < asteroids.Length; i++) {
+//			Debug.Log (asteroids[i].transform.position);
+			Debug.Log ("Name: " + asteroids[i].name);
+		}
+
 		numAsteroids = asteroids.Length;
 		Debug.Log ("numAsteroids: " + numAsteroids);
 		return numAsteroids == 0;
