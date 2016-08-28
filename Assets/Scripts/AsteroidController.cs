@@ -34,12 +34,12 @@ public class AsteroidController : MonoBehaviour
 			if (other.gameObject.CompareTag (destroyableObj.tag)) {
 				if (!other.gameObject.Equals (player)) {
 					createMiniAsteroids ();
-					destroyObjects (other);
+					destroyObjects (other, false);
 
 					break;
 				}
 			} else if (other.gameObject.CompareTag (player.tag)) { //game over
-				destroyObjects (other);
+				destroyObjects (other, true);
 			}
 		}
 	}
@@ -49,16 +49,19 @@ public class AsteroidController : MonoBehaviour
 		this.curDivision = numDivision;
 	}
 
-	private void destroyObjects (Collider other)
+	private void destroyObjects (Collider other, bool isPlayer)
 	{
 		GameObject createdAsteroidExplosion = (GameObject)Instantiate(asteroidExplosion, transform.position, transform.rotation); //create an asteroidExplosion with position and rotation of asteroid
-		GameObject createdPlayerExplosion = (GameObject)Instantiate(playerExplosion, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
 
 		Destroy (other.gameObject);
 		Destroy (gameObject);
 
 		Destroy (createdAsteroidExplosion, explosionLifetime); //after explosionLifetime seconds, this gameobject will be destroyed
-		Destroy (createdPlayerExplosion, explosionLifetime);
+
+		if (isPlayer) {
+			GameObject createdPlayerExplosion = (GameObject)Instantiate (playerExplosion, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
+			Destroy (createdPlayerExplosion, explosionLifetime);
+		}
 	}
 
 	private int getRandomValueForComponent ()

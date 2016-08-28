@@ -54,6 +54,9 @@ public class PlayerController : MonoBehaviour
 		if (Input.GetButton ("Fire1") && Time.time > nextFire) {
 			nextFire = Time.time + fireRate;
 			Instantiate (shot, shotSpawn.position, shotSpawn.rotation);
+			//play fire sound
+			AudioSource audioSource = GetComponent<AudioSource>();
+			audioSource.Play ();
 		}
 	}
 
