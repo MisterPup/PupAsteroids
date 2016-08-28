@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
-	public GameObject asteroidPrefab;
+	public GameObject asteroid;
 	public GameObject world;
 	public GameObject player;
+	public GameObject playerScore;
 	public float minPlayerNewAsteroidDistance;
 
 	public int waitTimeBeforeNewWave;
@@ -21,7 +22,7 @@ public class GameController : MonoBehaviour
 
 	void Start ()
 	{
-		asteroidTag = asteroidPrefab.tag;
+		asteroidTag = asteroid.tag;
 
 		BoundaryController boundaryController = (BoundaryController)world.GetComponent (typeof(BoundaryController));
 		worldXSize = boundaryController.WorldXSize;
@@ -30,6 +31,9 @@ public class GameController : MonoBehaviour
 		minSize = worldXSize < worldZSize ? worldXSize : worldZSize;
 
 		StartCoroutine (waveManager ());
+
+		Instantiate (playerScore, playerScore.transform.position, playerScore.transform.rotation);
+//		Instantiate (playerScore, new Vector3(0.7f, 0.7f, 0.0f), new Quaternion());
 	}
 
 	void Update ()
@@ -72,7 +76,7 @@ public class GameController : MonoBehaviour
 			Vector3 newAsteroidPosition = getPositionForNewAsteroid ();
 			newAsteroidPosition.y = player.transform.position.y; //must be on the same xz plane of the player
 			Quaternion newAsteroidRotation = getRotationForNewAsteroid ();
-			GameObject newAsteroid = (GameObject)Instantiate (asteroidPrefab, newAsteroidPosition, newAsteroidRotation);
+			Instantiate (asteroid, newAsteroidPosition, newAsteroidRotation);
 		}
 	}
 

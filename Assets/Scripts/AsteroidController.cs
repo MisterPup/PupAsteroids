@@ -19,6 +19,9 @@ public class AsteroidController : MonoBehaviour
 
 	public int explosionLifetime;
 
+	public GameObject playerScorePrefab; //prefab for retrieving associated tag
+	private GUIText playerScoreGuiText;
+
 	void Start ()
 	{
 		GetComponent<Rigidbody> ().angularVelocity = Random.insideUnitSphere * tumble; //random 3d rotation
@@ -26,6 +29,9 @@ public class AsteroidController : MonoBehaviour
 		Vector3 randomVelocity = Random.insideUnitSphere * randomInitialVelocity;
 		randomVelocity.y = 0; //must be on the xz plane
 		GetComponent<Rigidbody> ().velocity = randomVelocity;
+
+		GameObject playerScore = GameObject.FindGameObjectWithTag (playerScorePrefab.tag);
+		playerScoreGuiText = playerScore.GetComponent<GUIText> ();
 	}
 
 	void OnTriggerEnter (Collider other)
@@ -58,10 +64,21 @@ public class AsteroidController : MonoBehaviour
 
 		Destroy (createdAsteroidExplosion, explosionLifetime); //after explosionLifetime seconds, this gameobject will be destroyed
 
+		updatePlayerScore ();
+
 		if (isPlayer) {
 			GameObject createdPlayerExplosion = (GameObject)Instantiate (playerExplosion, other.transform.position, other.transform.rotation); //create a playerExplosion with position and rotation of player
 			Destroy (createdPlayerExplosion, explosionLifetime);
 		}
+	}
+
+	private void updatePlayerScore() 
+	{
+		string playerScoreText = playerScoreGuiText.text;
+		int playerScoreInt = 0;
+		int.TryParse(playerScoreText, out playerScoreInt);
+		playerScoreInt += 1;
+		playerScoreGuiText.text = playerScoreInt.ToString ();
 	}
 
 	private int getRandomValueForComponent ()
