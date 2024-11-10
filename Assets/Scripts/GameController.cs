@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
@@ -21,13 +22,13 @@ public class GameController : MonoBehaviour
 	int waveNumber = 0;
 	int numAsteroids = 0;
 
-	public GUIText playerScoreTextPrefab;
-	public GUIText gameOverTextPrefab;
-	public GUIText restartTextPrefab;
+	public Text playerScoreTextPrefab;
+	public Text gameOverTextPrefab;
+	public Text restartTextPrefab;
 
-	private GUIText playerScoreText;
-	private GUIText gameOverText;
-	private GUIText restartText;
+	private Text playerScoreText;
+	private Text gameOverText;
+	private Text restartText;
 
 	private int playerScore;
 	private bool isGameOver;
@@ -44,9 +45,9 @@ public class GameController : MonoBehaviour
 
 		StartCoroutine (waveManager ());
 
-		playerScoreText = (GUIText)Instantiate (playerScoreTextPrefab, playerScoreTextPrefab.transform.position, playerScoreTextPrefab.transform.rotation);
-		gameOverText = (GUIText)Instantiate (gameOverTextPrefab, gameOverTextPrefab.transform.position, gameOverTextPrefab.transform.rotation);
-		restartText = (GUIText)Instantiate (restartTextPrefab, restartTextPrefab.transform.position, restartTextPrefab.transform.rotation);
+		playerScoreText = (Text)Instantiate (playerScoreTextPrefab, playerScoreTextPrefab.transform.position, playerScoreTextPrefab.transform.rotation);
+		gameOverText = (Text)Instantiate (gameOverTextPrefab, gameOverTextPrefab.transform.position, gameOverTextPrefab.transform.rotation);
+		restartText = (Text)Instantiate (restartTextPrefab, restartTextPrefab.transform.position, restartTextPrefab.transform.rotation);
 
 		playerScoreText.text = "Player score: 0";
 		gameOverText.text = "";

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class Done_GameController : MonoBehaviour
@@ -10,9 +11,9 @@ public class Done_GameController : MonoBehaviour
 	public float startWait;
 	public float waveWait;
 	
-	public GUIText scoreText;
-	public GUIText restartText;
-	public GUIText gameOverText;
+	public Text scoreText;
+	public Text restartText;
+	public Text gameOverText;
 	
 	private bool gameOver;
 	private bool restart;
